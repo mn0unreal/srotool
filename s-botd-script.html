@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>edit s bot script from new to old</title>
+    <link rel="icon" type="image/png" href="https://bot-cave.net/data/assets/logo/favicon.png" sizes="32x32" />
+
+</head>
+
+<body>
+    <h2>put your script lines to reverse or convert from new to old sbot version</h2>
+
+    <label for="inputLines">Enter script lines:</label> <br>
+    <!-- Change input type to textarea -->
+    <textarea id="inputLines" rows="6" cols="20" required></textarea>
+    <br>
+    <button onclick="processInput()">Submit</button>
+
+    <h3>Output</h3>
+
+    <div>
+        <label for="originalLines">(SbotP v1.0.51) Original Lines:</label> <br>
+        <!-- Display original lines in a textarea -->
+        <textarea id="originalLines" rows="6" cols="20" readonly></textarea>
+    </div>
+
+    <div>
+        <label for="modifiedLines">(SBOT 1.0.38) Modified Lines:</label> <br>
+        <!-- Display modified lines in a textarea -->
+        <textarea id="modifiedLines" rows="6" cols="20" readonly></textarea>
+    </div>
+
+    <div>
+        <label for="reversedLines">Reversed Lines:</label> <br>
+        <!-- Display reversed lines in a textarea -->
+        <textarea id="reversedLines" rows="6" cols="20" readonly></textarea>
+    </div>
+
+    <script>
+        function processInput() {
+            // Retrieve the input lines from the textarea
+            var inputLines = document.getElementById("inputLines").value;
+
+            // Split the input into lines
+            var lines = inputLines.split("\n");
+
+            // Initialize variables to store original, modified, and reversed lines
+            var originalLines = '';
+            var modifiedLines = '';
+            var reversedLines = '';
+
+            // Process each line
+            lines.forEach(function (line) {
+                if (line.includes('teleport(')) {
+                    // If the line contains 'teleport(', keep it as is
+                    originalLines += line + "\n";
+                    modifiedLines += line + "\n";
+                    reversedLines += line + "\n";
+                } else {
+                    // Use regular expression to remove numbers after the last comma and keep the closing parenthesis
+                    var modifiedLine = line.replace(/,\d+([^,)]+)$/, '$1');
+
+                    // Append original and modified lines to the respective variables
+                    originalLines += line + "\n";
+                    modifiedLines += modifiedLine + "\n";
+                    reversedLines += line + "\n";
+                }
+            });
+
+            // Reverse the lines
+            reversedLines = lines.reverse().join("\n");
+
+            // Update the output textareas
+            document.getElementById("originalLines").value = originalLines.trim();
+            document.getElementById("modifiedLines").value = modifiedLines.trim();
+            document.getElementById("reversedLines").value = reversedLines.trim();
+        }
+    </script>
+</body>
+
+</html>
