@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Sbot script from 1.0.51 to 1.0.38</title>
+    <link rel="icon" type="image/png" href="./favicon.png" sizes="32x32" />
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 20px;
+        }
+
+        h2 {
+            color: #333;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        textarea {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 5px;
+            margin-bottom: 10px;
+            resize: vertical;
+        }
+
+        button {
+            background-color: #4caf50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            position: relative; /* Added position relative */
+        }
+
+        h3 {
+            color: #333;
+        }
+
+        .output-container {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .output-box {
+            flex: 1;
+            margin-right: 20px;
+            background-color: #fff;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .notification {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background-color: #4caf50;
+            color: white;
+            padding: 15px;
+            border-radius: 4px;
+            display: none;
+            z-index: 1;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Put your script lines to reverse or convert from new to old Sbot version</h2>
+
+    <label for="inputLines">Enter script lines:</label>
+    <!-- Change input type to textarea -->
+    <textarea id="inputLines" rows="6" required></textarea>
+    <br>
+    <button onclick="processInput()">Submit</button>
+
+    <h3>Output</h3>
+
+    <div class="output-container">
+     
+        <div class="output-box">
+            <!-- Move the label above the output-box div -->
+            <label for="modifiedLines">(SBOT 1.0.38) Modified script:</label>
+            <div class="notification" id="notification">Copied to clipboard!</div>
+            <!-- Move the button above the textarea -->
+            <button onclick="copyToClipboard('modifiedLines', 'Modified script')">Copy</button>
+            <!-- Display modified lines in a textarea -->
+            <div id="modifiedLines" style="white-space: pre-line;"></div>
+        </div>
+
+        <div class="output-box">
+            <!-- Move the label above the output-box div -->
+            <label for="reversedLines">SBOT 1.0.38 Reversed script:</label>
+            <div class="notification" id="notificationReversed">Copied to clipboard!</div>
+            <!-- Move the button above the textarea -->
+            <button onclick="copyToClipboard('reversedLines', 'Reversed script')">Copy</button>
+            <!-- Display reversed lines in a textarea -->
+            <div id="reversedLines" style="white-space: pre-line;"></div>
+        </div>
+    </div>
+
+    <script>
+        function processInput() {
+            // Retrieve the input lines from the textarea
+            var inputLines = document.getElementById("inputLines").value;
+
+            // Split the input into lines
+            var lines = inputLines.split("\n");
+
+            // Initialize variables to store modified and reversed lines
+            var modifiedLines = '';
+            var reversedLines = '';
+
+            // Process each line
+            lines.forEach(function (line) {
+                // Keep the first two numbers, remove any number after the second comma along with the comma, and keep the last parenthesis
+                var modifiedLine = line.replace(/,(\d+),.*$/, ',$1)');
+
+                // Append modified line to the respective variable
+                modifiedLines += modifiedLine + "\n";
+
+                if (line.startsWith('teleport')) {
+                    // If the line starts with 'teleport', make it red in reversedLines
+                    reversedLines += '<span style="color: red;">' + line + '</span>\n';
+                } else {
+                    reversedLines += modifiedLine + "\n"; // Use modified line for reversed lines
+                }
+            });
+
+            // Reverse the lines
+            reversedLines = reversedLines.split("\n").reverse().join("\n");
+
+            // Update the output divs
+            document.getElementById("modifiedLines").innerHTML = modifiedLines.trim();
+            document.getElementById("reversedLines").innerHTML = reversedLines.trim();
+        }
+
+        function copyToClipboard(elementId, message) {
+            var div = document.getElementById(elementId);
+            var range = document.createRange();
+            range.selectNodeContents(div);
+            var selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            document.execCommand("copy");
+
+            // Show notification
+            var notificationId = elementId === 'modifiedLines' ? 'notification' : 'notificationReversed';
+            var notification = document.getElementById(notificationId);
+            notification.innerHTML = message + ' Copied to clipboard!';
+            notification.style.display = 'block';
+
+            // Hide notification after 2 seconds
+            setTimeout(function () {
+                notification.style.display = 'none';
+            }, 2000);
+        }
+    </script>
+</body>
+
+</html>
